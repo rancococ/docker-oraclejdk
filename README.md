@@ -14,5 +14,5 @@ support tool
 4  jrehome: /data/jdk/jre
 5. user: root/admin; app/123456
 6. usage:
-docker run -it --rm --name java-1.8.192-alpine registry.cn-hangzhou.aliyuncs.com/rancococ/oraclejdk:1.8.192-alpine "bash"
-docker run -it --rm --name java-1.8.192-centos registry.cn-hangzhou.aliyuncs.com/rancococ/oraclejdk:1.8.192-centos "bash"
+docker run -it --rm --name oraclejdk-1.8.0_192-alpine registry.cn-hangzhou.aliyuncs.com/rancococ/oraclejdk:1.8.0_192-alpine "bash"
+docker run -it --rm --name oraclejdk-1.8.0_192-centos registry.cn-hangzhou.aliyuncs.com/rancococ/oraclejdk:1.8.0_192-centos "bash"
