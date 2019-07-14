@@ -69,9 +69,6 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-WANdisco\n\
     chown -R app:app /docker-entrypoint.sh && \
     chmod +x /docker-entrypoint.sh
 
-# user root
-USER root
-
 # set environment
 ENV LANG zh_CN.UTF-8
 ENV TZ "Asia/Shanghai"
