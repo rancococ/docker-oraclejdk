@@ -47,8 +47,8 @@ base_dir="$( cd -P "$( dirname "$source" )" && pwd )"
 cd ${base_dir}
 
 # run default command
-docker run -it --rm --name oraclejdk-1.8.192-centos oraclejdk:1.8.192-centos
+docker run -it --rm --name oraclejdk-1.8.0_192-centos oraclejdk:1.8.0_192-centos
 # run sshd
-docker run -it --rm --name oraclejdk-1.8.192-centos -p 10022:22 oraclejdk:1.8.192-centos ""
+docker run -it --rm --name oraclejdk-1.8.0_192-centos -p 10022:22 oraclejdk:1.8.0_192-centos ""
 # run bash
-docker run -it --rm --name oraclejdk-1.8.192-centos -p 18080:8080 -p 10001:10001 -p 10002:10002 oraclejdk:1.8.192-centos "bash"
+docker run -it --rm --name oraclejdk-1.8.0_192-centos -p 18080:8080 -p 10001:10001 -p 10002:10002 oraclejdk:1.8.0_192-centos "bash"
