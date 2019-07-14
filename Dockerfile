@@ -23,7 +23,7 @@ RUN \rm -rf /etc/yum.repos.d/*.repo && \
     sed -i '/mirrors.cloud.aliyuncs.com/d' /etc/yum.repos.d/centos.repo && \
     echo -e "[wandisco-svn]\n\
 name=WANdisco Distribution of svn\n\
-baseurl=http://opensource.wandisco.com/centos/\$releasever/svn-1.8/RPMS/\$basearch\n\
+baseurl=http://opensource.wandisco.com/centos/\$releasever/svn-1.11/RPMS/\$basearch\n\
 enabled=1\n\
 gpgcheck=1\n\
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-WANdisco\n\
