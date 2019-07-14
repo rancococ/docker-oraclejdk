@@ -21,22 +21,20 @@ RUN \rm -rf /etc/yum.repos.d/*.repo && \
     curl -s -o /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-${CENTOS_VER}.repo && \
     sed -i '/mirrors.aliyuncs.com/d' /etc/yum.repos.d/centos.repo && \
     sed -i '/mirrors.cloud.aliyuncs.com/d' /etc/yum.repos.d/centos.repo && \
-    cat > /etc/yum.repos.d/wandisco-svn.repo << EOF
-[WANdisco-svn]
-name=WANdisco Distribution of svn
-baseurl=http://opensource.wandisco.com/centos/\$releasever/svn-1.8/RPMS/\$basearch
-enabled=1
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-WANdisco
-EOF && \
-    cat > /etc/yum.repos.d/wandisco-git.repo << EOF
-[WANdisco-git]
-name=WANdisco Distribution of git
-baseurl=http://opensource.wandisco.com/centos/\$releasever/git/\$basearch
-enabled=1
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-WANdisco
-EOF && \
+    echo -e "[wandisco-svn]\n\
+name=WANdisco Distribution of svn\n\
+baseurl=http://opensource.wandisco.com/centos/\$releasever/svn-1.8/RPMS/\$basearch\n\
+enabled=1\n\
+gpgcheck=1\n\
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-WANdisco\n\
+" > /etc/yum.repos.d/wandisco-svn.repo && \
+    echo -e "[wandisco-git]\n\
+name=WANdisco Distribution of git\n\
+baseurl=http://opensource.wandisco.com/centos/\$releasever/git/\$basearch\n\
+enabled=1\n\
+gpgcheck=1\n\
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-WANdisco\n\
+" > /etc/yum.repos.d/wandisco-git.repo && \
     yum clean all && yum makecache && \
     \rm -rf /etc/pki/rpm-gpg/* && \
     curl -s -o /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-${CENTOS_VER} https://mirrors.aliyun.com/centos/RPM-GPG-KEY-CentOS-${CENTOS_VER} && \
