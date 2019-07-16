@@ -4,8 +4,8 @@
 docker-oraclejdk
 
 support os:
-1. alpine:curl bash openssh wget net-tools gettext zip unzip tzdata ncurses git subversion
-2. centos:passwd openssl openssh-server wget net-tools gettext zip unzip ncurses git subversion
+1. alpine:curl bash openssh wget net-tools gettext zip unzip tzdata ncurses ttf-dejavu git subversion
+2. centos:passwd openssl openssh-server wget net-tools gettext zip unzip ncurses fontconfig git subversion
 
 support tool
 1. sshd, jdk, jre, git, svn
