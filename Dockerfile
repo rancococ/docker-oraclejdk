@@ -35,9 +35,9 @@ RUN echo -e "https://mirrors.huaweicloud.com/alpine/${ALPINE_VER}/main\nhttps://
     sed -i 's/root:x:0:0:root:\/root:\/bin\/ash/root:x:0:0:root:\/root:\/bin\/bash/g' /etc/passwd && echo -e 'admin\nadmin' | passwd root && \
     touch /root/.bashrc && \
     echo "export HISTTIMEFORMAT=\"%d/%m/%y %T \"" >> /root/.bashrc && \
-    echo "export PS1='[\u@\h \W]\$ '"             >> /root/.bashrc && \
-    echo "alias ll='ls -al'"                      >> /root/.bashrc && \
-    echo "alias ls='ls --color=auto'"             >> /root/.bashrc && \
+    echo "export PS1='[\u@\h \W]\$ '" >> /root/.bashrc && \
+    echo "alias ll='ls -al'" >> /root/.bashrc && \
+    echo "alias ls='ls --color=auto'" >> /root/.bashrc && \
     chmod +x /root/.bashrc && \
     mkdir -p ${APP_HOME} && \
     addgroup -S -g ${GID} ${GROUP} && \
