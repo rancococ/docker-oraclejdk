@@ -57,10 +57,18 @@ RUN \rm -rf /etc/yum.repos.d/*.repo && \
     sed -i 's/#UseDNS.*/UseDNS no/g' /etc/ssh/sshd_config && \
     sed -i '/^session\s\+required\s\+pam_loginuid.so/s/^/#/' /etc/pam.d/sshd && \
     echo "Asia/Shanghai" > /etc/timezone && \ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    touch /home/.bashrc && \
+    echo "export HISTTIMEFORMAT=\"%d/%m/%y %T \"" >> /home/.bashrc && \
+    echo "export PS1='[\u@\h \W]\$ '" >> /home/.bashrc && \
+    echo "alias ll='ls -al'" >> /home/.bashrc && \
+    echo "alias ls='ls --color=auto'" >> /home/.bashrc && \
+    chmod +x /home/.bashrc && \
     mkdir -p /root/.ssh && chown root.root /root && chmod 700 /root/.ssh && echo 'admin' | passwd --stdin root && \
     mkdir -p ${APP_HOME} && \
     groupadd -r -g ${GID} ${GROUP} && \
     useradd -r -m -g ${GROUP} -d ${APP_HOME} -u ${UID} -s /bin/bash ${USER} && echo '123456' | passwd --stdin ${USER} && \
+    \cp /home/.bashrc ${APP_HOME} && \
+    chown -R ${UID}:${GID} ${APP_HOME}/.bashrc && \
     mkdir -p ${JDK_HOME} && \
     tempuuid=$(cat /proc/sys/kernel/random/uuid) && mkdir -p /tmp/${tempuuid} && \
     wget -c -O /usr/local/bin/gosu --no-cookies --no-check-certificate "${GOSU_URL}" && chmod +x /usr/local/bin/gosu && \
