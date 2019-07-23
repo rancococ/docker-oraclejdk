@@ -31,18 +31,21 @@ RUN echo -e "https://mirrors.huaweicloud.com/alpine/${ALPINE_VER}/main\nhttps://
     sed -i "s/#PermitRootLogin.*/PermitRootLogin yes/g" /etc/ssh/sshd_config && \
     sed -i "s/#AuthorizedKeysFile/AuthorizedKeysFile/g" /etc/ssh/sshd_config && \
     echo "Asia/Shanghai" > /etc/timezone && \ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    touch /home/.bashrc && \
+    echo "export HISTTIMEFORMAT=\"%d/%m/%y %T \"" >> /home/.bashrc && \
+    echo "export PS1='[\u@\h \W]\$ '" >> /home/.bashrc && \
+    echo "alias ll='ls -al'" >> /home/.bashrc && \
+    echo "alias ls='ls --color=auto'" >> /home/.bashrc && \
+    chmod +x /home/.bashrc && \
     mkdir -p /root/.ssh && chown root.root /root && chmod 700 /root/.ssh && \
     sed -i 's/root:x:0:0:root:\/root:\/bin\/ash/root:x:0:0:root:\/root:\/bin\/bash/g' /etc/passwd && echo -e 'admin\nadmin' | passwd root && \
-    touch /root/.bashrc && \
-    echo "export HISTTIMEFORMAT=\"%d/%m/%y %T \"" >> /root/.bashrc && \
-    echo "export PS1='[\u@\h \W]\$ '" >> /root/.bashrc && \
-    echo "alias ll='ls -al'" >> /root/.bashrc && \
-    echo "alias ls='ls --color=auto'" >> /root/.bashrc && \
-    chmod +x /root/.bashrc && \
+    \cp /home/.bashrc /root && \
+    chown -R root:root /root/.bashrc && \
     mkdir -p ${APP_HOME} && \
     addgroup -S -g ${GID} ${GROUP} && \
     adduser -S -G ${GROUP} -h ${APP_HOME} -u ${UID} -s /bin/bash ${USER} && echo -e '123456\n123456' | passwd ${USER} && \
-    \cp /root/.bashrc ${APP_HOME} && \
+    \cp /home/.bashrc ${APP_HOME} && \
+    chown -R ${UID}:${GID} ${APP_HOME}/.bashrc && \
     mkdir -p ${JDK_HOME} && \
     tempuuid=$(cat /proc/sys/kernel/random/uuid) && mkdir -p /tmp/${tempuuid} && \
     wget -c -O /usr/local/bin/gosu --no-cookies --no-check-certificate "${GOSU_URL}" && chmod +x /usr/local/bin/gosu && \
