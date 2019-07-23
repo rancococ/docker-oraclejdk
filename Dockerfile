@@ -6,6 +6,10 @@ MAINTAINER "rancococ" <rancococ@qq.com>
 
 # set arg info
 ARG CENTOS_VER=7
+ARG USER=app
+ARG GROUP=app
+ARG UID=888
+ARG GID=888
 ARG APP_HOME=/data/app
 ARG JDK_HOME=/data/jdk
 ARG JRE_HOME=/data/jdk/jre
@@ -15,26 +19,26 @@ ARG JRE_URL=https://github.com/rancococ/serverjre/releases/download/server-jre-8
 # copy script
 COPY docker-entrypoint.sh /
 
-# install repositories and packages : curl bash passwd openssl openssh wget net-tools gettext zip unzip ncurses fontconfig git subversion
+# install repositories and packages : curl bash bash-completion passwd openssl openssh wget net-tools gettext zip unzip ncurses fontconfig git subversion
 RUN \rm -rf /etc/yum.repos.d/*.repo && \
     curl -s -o /etc/yum.repos.d/centos.repo http://mirrors.aliyun.com/repo/Centos-${CENTOS_VER}.repo && \
     curl -s -o /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-${CENTOS_VER}.repo && \
     sed -i '/mirrors.aliyuncs.com/d' /etc/yum.repos.d/centos.repo && \
     sed -i '/mirrors.cloud.aliyuncs.com/d' /etc/yum.repos.d/centos.repo && \
-    echo -e "[wandisco-svn]\n\
-name=WANdisco Distribution of svn\n\
-baseurl=http://opensource.wandisco.com/centos/\$releasever/svn-1.11/RPMS/\$basearch\n\
-enabled=1\n\
-gpgcheck=1\n\
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-WANdisco\n\
-" > /etc/yum.repos.d/wandisco-svn.repo && \
-    echo -e "[wandisco-git]\n\
-name=WANdisco Distribution of git\n\
-baseurl=http://opensource.wandisco.com/centos/\$releasever/git/\$basearch\n\
-enabled=1\n\
-gpgcheck=1\n\
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-WANdisco\n\
-" > /etc/yum.repos.d/wandisco-git.repo && \
+    touch /etc/yum.repos.d/wandisco-svn.repo && \
+    echo -e "[wandisco-svn]" >> /etc/yum.repos.d/wandisco-svn.repo && \
+    echo -e "name=WANdisco Distribution of svn" >> /etc/yum.repos.d/wandisco-svn.repo && \
+    echo -e "baseurl=http://opensource.wandisco.com/centos/\$releasever/svn-1.11/RPMS/\$basearch" >> /etc/yum.repos.d/wandisco-svn.repo && \
+    echo -e "enabled=1" >> /etc/yum.repos.d/wandisco-svn.repo && \
+    echo -e "gpgcheck=1" >> /etc/yum.repos.d/wandisco-svn.repo && \
+    echo -e "gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-WANdisco" >> /etc/yum.repos.d/wandisco-svn.repo && \
+    touch /etc/yum.repos.d/wandisco-git.repo && \
+    echo -e "[wandisco-git]" >> /etc/yum.repos.d/wandisco-git.repo && \
+    echo -e "name=WANdisco Distribution of git" >> /etc/yum.repos.d/wandisco-git.repo && \
+    echo -e "baseurl=http://opensource.wandisco.com/centos/\$releasever/git/\$basearch" >> /etc/yum.repos.d/wandisco-git.repo && \
+    echo -e "enabled=1" >> /etc/yum.repos.d/wandisco-git.repo && \
+    echo -e "gpgcheck=1" >> /etc/yum.repos.d/wandisco-git.repo && \
+    echo -e "gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-WANdisco" >> /etc/yum.repos.d/wandisco-git.repo && \
     yum clean all && yum makecache && \
     \rm -rf /etc/pki/rpm-gpg/* && \
     curl -s -o /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-${CENTOS_VER} https://mirrors.aliyun.com/centos/RPM-GPG-KEY-CentOS-${CENTOS_VER} && \
@@ -44,7 +48,7 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-WANdisco\n\
     rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-${CENTOS_VER} && \
     rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-WANdisco && \
     sed -i 's@override_install_langs=en_US.utf8@#override_install_langs=en_US.utf8@g' "/etc/yum.conf" && \
-    yum install -y passwd openssl openssh-server wget net-tools gettext zip unzip ncurses fontconfig git subversion && \
+    yum install -y curl bash bash-completion passwd openssl openssh-server wget net-tools gettext zip unzip ncurses fontconfig git subversion && \
     yum reinstall -y glibc-common && \
     yum clean all && \rm -rf /var/lib/{cache,log} /var/log/lastlog && \
     ssh-keygen -q -t rsa -b 2048 -f /etc/ssh/ssh_host_rsa_key -N '' && \
@@ -54,8 +58,10 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-WANdisco\n\
     sed -i '/^session\s\+required\s\+pam_loginuid.so/s/^/#/' /etc/pam.d/sshd && \
     echo "Asia/Shanghai" > /etc/timezone && \ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     mkdir -p /root/.ssh && chown root.root /root && chmod 700 /root/.ssh && echo 'admin' | passwd --stdin root && \
-    mkdir -p ${APP_HOME} && mkdir -p ${JDK_HOME} && \
-    groupadd -r app && useradd -r -m -g app -d ${APP_HOME} -s /bin/bash app && echo '123456' | passwd --stdin app && \
+    mkdir -p ${APP_HOME} && \
+    groupadd -r -g ${GID} ${GROUP} && \
+    useradd -r -m -g ${GROUP} -d ${APP_HOME} -u ${UID} -s /bin/bash ${USER} && echo '123456' | passwd --stdin ${USER} && \
+    mkdir -p ${JDK_HOME} && \
     tempuuid=$(cat /proc/sys/kernel/random/uuid) && mkdir -p /tmp/${tempuuid} && \
     wget -c -O /usr/local/bin/gosu --no-cookies --no-check-certificate "${GOSU_URL}" && chmod +x /usr/local/bin/gosu && \
     wget -c -O /tmp/${tempuuid}/myjre.tar.gz --no-cookies --no-check-certificate ${JRE_URL} && \
@@ -65,8 +71,8 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-WANdisco\n\
     sed -i 's@#crypto.policy=unlimited@crypto.policy=unlimited@g' "${JRE_HOME}/lib/security/java.security" && \
     chmod -Rf u+x ${JDK_HOME}/bin/* && \
     chmod -Rf u+x ${JRE_HOME}/bin/* && \
-    chown -R app:app /data && \
-    chown -R app:app /docker-entrypoint.sh && \
+    chown -R ${USER}:${GROUP} /data && \
+    chown -R ${USER}:${GROUP} /docker-entrypoint.sh && \
     chmod +x /docker-entrypoint.sh
 
 # set environment
