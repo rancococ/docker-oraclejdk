@@ -6,6 +6,10 @@ MAINTAINER "rancococ" <rancococ@qq.com>
 
 # set arg info
 ARG ALPINE_VER=v3.9
+ARG USER=app
+ARG GROUP=app
+ARG UID=888
+ARG GID=888
 ARG APP_HOME=/data/app
 ARG JDK_HOME=/data/jdk
 ARG JRE_HOME=/data/jdk/jre
@@ -15,9 +19,9 @@ ARG JRE_URL=https://github.com/rancococ/serverjre/releases/download/server-jre-8
 # copy script
 COPY docker-entrypoint.sh /
 
-# install repositories and packages : busybox-suid curl bash openssh wget net-tools gettext zip unzip tar tzdata ncurses procps ttf-dejavu git subversion
+# install repositories and packages : busybox-suid curl bash bash-completion openssh wget net-tools gettext zip unzip tar tzdata ncurses procps ttf-dejavu git subversion
 RUN echo -e "https://mirrors.huaweicloud.com/alpine/${ALPINE_VER}/main\nhttps://mirrors.huaweicloud.com/alpine/${ALPINE_VER}/community" > /etc/apk/repositories && \
-    apk update && apk add busybox-suid curl bash openssh wget net-tools gettext zip unzip tar tzdata ncurses procps ttf-dejavu git subversion && \
+    apk update && apk add busybox-suid curl bash bash-completion openssh wget net-tools gettext zip unzip tar tzdata ncurses procps ttf-dejavu git subversion && \
     \rm -rf /var/cache/apk/* && \
     ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' && \
     ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key  -N '' && \
@@ -29,8 +33,17 @@ RUN echo -e "https://mirrors.huaweicloud.com/alpine/${ALPINE_VER}/main\nhttps://
     echo "Asia/Shanghai" > /etc/timezone && \ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     mkdir -p /root/.ssh && chown root.root /root && chmod 700 /root/.ssh && \
     sed -i 's/root:x:0:0:root:\/root:\/bin\/ash/root:x:0:0:root:\/root:\/bin\/bash/g' /etc/passwd && echo -e 'admin\nadmin' | passwd root && \
-    mkdir -p ${APP_HOME} && mkdir -p ${JDK_HOME} && \
-    addgroup -S app && adduser -S -G app -h ${APP_HOME} -s /bin/bash app && echo -e '123456\n123456' | passwd app && \
+    touch /root/.bashrc && \
+    echo "export HISTTIMEFORMAT=\"%d/%m/%y %T \"" >> /root/.bashrc && \
+    echo "export PS1='[\u@\h \W]\$ '"             >> /root/.bashrc && \
+    echo "alias ll='ls -al'"                      >> /root/.bashrc && \
+    echo "alias ls='ls --color=auto'"             >> /root/.bashrc && \
+    chmod +x /root/.bashrc && \
+    mkdir -p ${APP_HOME} && \
+    addgroup -S -g ${GID} ${GROUP} && \
+    adduser -S -G ${GROUP} -h ${APP_HOME} -u ${UID} -s /bin/bash ${USER} && echo -e '123456\n123456' | passwd ${USER} && \
+    \cp /root/.bashrc ${APP_HOME} && \
+    mkdir -p ${JDK_HOME} && \
     tempuuid=$(cat /proc/sys/kernel/random/uuid) && mkdir -p /tmp/${tempuuid} && \
     wget -c -O /usr/local/bin/gosu --no-cookies --no-check-certificate "${GOSU_URL}" && chmod +x /usr/local/bin/gosu && \
     wget -c -O /tmp/${tempuuid}/myjre.tar.gz --no-cookies --no-check-certificate ${JRE_URL} && \
@@ -40,8 +53,8 @@ RUN echo -e "https://mirrors.huaweicloud.com/alpine/${ALPINE_VER}/main\nhttps://
     sed -i 's@#crypto.policy=unlimited@crypto.policy=unlimited@g' "${JRE_HOME}/lib/security/java.security" && \
     chmod -Rf u+x ${JDK_HOME}/bin/* && \
     chmod -Rf u+x ${JRE_HOME}/bin/* && \
-    chown -R app:app /data && \
-    chown -R app:app /docker-entrypoint.sh && \
+    chown -R ${UID}:${GID} /data && \
+    chown -R ${UID}:${GID} /docker-entrypoint.sh && \
     chmod +x /docker-entrypoint.sh
 
 # set environment
