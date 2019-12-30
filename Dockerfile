@@ -8,8 +8,8 @@ MAINTAINER "rancococ" <rancococ@qq.com>
 ARG ALPINE_VER=v3.9
 ARG USER=app
 ARG GROUP=app
-ARG UID=888
-ARG GID=888
+ARG UID=8888
+ARG GID=8888
 ARG APP_HOME=/data/app
 ARG JDK_HOME=/data/jdk
 ARG JRE_HOME=/data/jdk/jre
