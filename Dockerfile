@@ -13,7 +13,7 @@ ARG GID=8888
 ARG APP_HOME=/data/app
 ARG JDK_HOME=/data/jdk
 ARG JRE_HOME=/data/jdk/jre
-ARG GOSU_URL=https://github.com/tianon/gosu/releases/download/1.11/gosu-amd64
+ARG GOSU_URL=https://github.com/tianon/gosu/releases/download/1.14/gosu-amd64
 ARG JRE_URL=https://github.com/rancococ/serverjre/releases/download/server-jre-8/server-jre-8u192-linux-x64.tar.gz
 
 # copy script
